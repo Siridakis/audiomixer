@@ -1,0 +1,52 @@
+.wrapper {
+    position: relative;
+    border: 2px solid black;
+    border-radius: 5px
+  }
+  
+  .input {
+    height: 4rem !important;
+    padding-top: rem(22px);
+    padding-bottom: rem(3px);
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border: none;
+  }
+  
+  .label {
+    position: absolute;
+    pointer-events: none;
+    padding-left: var(--mantine-spacing-sm);
+    padding-top: calc(var(--mantine-spacing-sm) / 2);
+    z-index: 1;
+  }
+  
+  .slider {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    padding-inline: 1rem;
+    height: 100%;
+    color: blueviolet;
+  }
+  
+  .thumb {
+    width: 1rem;
+    height: 1rem;
+    border-color: blueviolet;
+    border-radius: 4px 8px 8px 4px;
+  }
+  
+  .track {
+    height: 1rem;
+    /* &::before {
+      background-color: (
+        black
+      );
+    } */
+  }
+  
+  .bar {
+    background-color: blueviolet;
+  }
+  
