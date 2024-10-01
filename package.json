@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace websocket\" \"npm run dev --workspace react\"",
-    "build": "concurrently \"npm run build --workspace websocket\" \"npm run build --workspace react\""
+    "build": "npm run build:websocket && npm run build:react",
+    "build:websocket": "npm run build --workspace websocket && cp -r websocket/dist/* bundle/websocket",
+    "build:react": "npm run build --workspace react && cp -r react/dist/* bundle/react/"
   },
   "keywords": [],
   "author": "",
