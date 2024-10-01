@@ -1,5 +1,6 @@
-import { CustomEventTypes } from "./Types";
+import { CustomEventTypes, type VolumeSetting } from './Types';
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export async function bootAudioMixerServer(AudioMixer: any, AudioHandler: any) {
   console.log('$ WS audioServer boot');
   const socket = new WebSocket('ws://localhost:8080');
@@ -16,7 +17,7 @@ export async function bootAudioMixerServer(AudioMixer: any, AudioHandler: any) {
         console.log('[UPDATE EVENT] Update volume settings received by the audio server', parsedEvent.data);
         // Call AudioHandler.volumeControl passing in the trackName and update volume. This will immediately change the volume of the track in the game
         // Update game's volume settings object. This volume will be used when AudioHandler.play is called the next time.
-        parsedEvent.data.bootedVolumeSettings.forEach((element: any) => {
+        parsedEvent.data.bootedVolumeSettings.forEach((element: VolumeSetting) => {
           const { audioKey, faderVolume } = element;
           AudioMixer.setTrackVolume(element);
           AudioHandler.volumeControl(audioKey, faderVolume, 0.1);
