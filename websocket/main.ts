@@ -19,19 +19,9 @@ const wsServer = new WebSocket.Server({ port: WS_PORT });
 
 let bootedVolumeSettings: EventData = [
   {
-    audioKey: 'boost_button',
+    audioKey: 'example_track_key',
     faderVolume: 1,
-    group: 'UI',
-  },
-  {
-    audioKey: 'spin_button',
-    faderVolume: 0.6,
-    group: 'UI',
-  },
-  {
-    audioKey: 'main_game_background',
-    faderVolume: 1,
-    group: 'Music',
+    group: 'example_track_group',
   },
 ];
 
