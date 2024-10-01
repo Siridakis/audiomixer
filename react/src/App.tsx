@@ -1,42 +1,100 @@
-import { useEffect, useState } from "react";
-import AudioMixer from "./Components/AudioMixer";
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+import SliderInput from './Components/SliderInput';
+import { useEffect, useState } from 'react';
+import classes from './App.module.css';
 
-function App(socket: any) {
-	const [volumeSettings, setVolumeSettings] = useState(null);
+type VolumeSettings = {
+  bootedVolumeSettings: Array<VolumeSetting>;
+};
 
-	function updateVolumeSettings(newVolumeSettings: any) {
-		setVolumeSettings(newVolumeSettings);
-		socket.send(JSON.stringify(newVolumeSettings));
-	}
+type VolumeSetting = {
+  audioKey: string;
+  faderVolume: number;
+  group: string;
+};
 
-	useEffect(() => {
-		const socket = new WebSocket("ws://localhost:8080");
-		socket.addEventListener("open", () => {
-			console.log("WebSocket connection established");
-		});
-		socket.addEventListener("message", (event: { data: any }) => {
-			console.log("Received message:", event.data);
-			setVolumeSettings(JSON.parse(event.data));
-		});
-		socket.addEventListener("close", () => {
-			console.log("WebSocket connection closed");
-		});
-		socket.addEventListener("error", (error: any) => {
-			console.error("WebSocket error:", error);
-		});
-	}, []);
-
+export default function App() {
+  const [volume, setVolume] = useState<VolumeSettings>({ bootedVolumeSettings: [] });
+  const WS_URL = 'ws://localhost:8080';
+  const { sendJsonMessage, sendMessage, lastJsonMessage, readyState } = useWebSocket(WS_URL, {
+    share: false,
+    shouldReconnect: () => true,
+  });
+  // on successful connection send a greeting mesage
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    console.log("App mounted", volumeSettings);
-    
-  }, [volumeSettings]);
+    console.log('Connection state changed');
+    if (readyState === ReadyState.OPEN) {
+      sendMessage('Hello from Client');
+    }
+  }, [readyState]);
+  // log the incoming message
+  useEffect(() => {
+    if (lastJsonMessage?.data) {
+      console.log('Got a new message:', lastJsonMessage.data);
+      setVolume(lastJsonMessage.data);
+    }
+  }, [lastJsonMessage]);
+  // on volume change send a message to the websocket to update the volume
+  function handleVolumeChange(key: string, newVolume: number) {
+    setVolume((prevState) => {
+      const newVolumeSettings = prevState.bootedVolumeSettings.map((item: VolumeSetting) => {
+        if (item.audioKey === key) {
+          return {
+            audioKey: key,
+            faderVolume: newVolume / 100,
+            group: 'UI',
+          };
+        }
+        return item;
+      });
+      console.log('New Volume Settings', newVolumeSettings);
+      sendJsonMessage({
+        type: 'SET_VOLUME',
+        data: {
+          audioKey: key,
+          faderVolume: newVolume / 100,
+        },
+      });
+      return {
+        bootedVolumeSettings: newVolumeSettings,
+      };
+    });
+  }
 
-	return (
-		<AudioMixer
-			updateVolume={updateVolumeSettings}
-			volumeSettings={volumeSettings}
-		/>
-	);
+  function handleStateChange(key: string, newVolume: number) {
+    setVolume((prevState) => {
+      const newVolumeSettings = prevState.bootedVolumeSettings.map((item: VolumeSetting) => {
+        if (item.audioKey === key) {
+          return {
+            audioKey: key,
+            faderVolume: newVolume / 100,
+            group: 'UI',
+          };
+        }
+        return item;
+      });
+      return {
+        bootedVolumeSettings: newVolumeSettings,
+      };
+    });
+  }
+
+  return (
+    <div className={classes.appBody}>
+      <h1>Audio Mixer</h1>
+      <div className={classes.mixerGrid}>
+        {volume.bootedVolumeSettings.length > 0 &&
+          volume.bootedVolumeSettings.map((item: VolumeSetting) => (
+            <SliderInput
+              key={item.audioKey}
+              label={item.audioKey}
+              value={+(item.faderVolume * 100).toFixed(0)}
+              handleVolumeChange={handleVolumeChange}
+              handleStateChange={handleStateChange}
+            />
+          ))}
+      </div>
+    </div>
+  );
 }
-
-export default App;
