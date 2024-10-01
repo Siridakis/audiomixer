@@ -1,10 +1,4 @@
-export const CustomEventTypes = {
-  INIT_VOLUME_SETTINGS: 'INITIALIZE_VOLUME_SETTINGS',
-  SET_VOLUME: 'SET_VOLUME',
-  SET_GLOBAL_VOLUME_STATE: 'SET_GLOBAL_VOLUME_STATE',
-  UPDATED_VOLUME_SETTINGS: 'UPDATED_VOLUME_SETTINGS',
-  SERVER_STATE: 'SERVER_STATE',
-};
+import { CustomEventTypes } from "./Types";
 
 export async function bootAudioMixerServer(AudioMixer: any, AudioHandler: any) {
   console.log('$ WS audioServer boot');

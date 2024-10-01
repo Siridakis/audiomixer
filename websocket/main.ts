@@ -12,24 +12,11 @@
  */
 
 import WebSocket from 'ws';
+import { CustomEventTypes, EventData, VolumeSetting } from './Types';
 
-const CustomEventTypes = {
-  INIT_VOLUME_SETTINGS: 'INITIALIZE_VOLUME_SETTINGS',
-  SET_VOLUME: 'SET_VOLUME',
-  SET_GLOBAL_VOLUME_STATE: 'SET_GLOBAL_VOLUME_STATE',
-  UPDATED_VOLUME_SETTINGS: 'UPDATED_VOLUME_SETTINGS',
-  SERVER_STATE: 'SERVER_STATE',
-};
 const WS_PORT = 8080;
 const wsServer = new WebSocket.Server({ port: WS_PORT });
 
-type VolumeSetting = {
-  audioKey: string;
-  faderVolume: number;
-  group: string;
-}
-
-type EventData = Array<VolumeSetting>;
 
 let bootedVolumeSettings: EventData = [
   {
@@ -65,12 +52,11 @@ wsServer.on('connection', (ws, req) => {
 
 console.log(`WebSocket server is running on port ${WS_PORT}`);
 
-function handleCustomEvent(event: keyof typeof CustomEventTypes, data: any) {
+function handleCustomEvent(event: CustomEventTypes, data: any) {
   switch (event) {
     case CustomEventTypes.INIT_VOLUME_SETTINGS:
       console.log(`[EVENT] ${event}`);
       try {
-        // console.log(`[INIT] volume settings: ${JSON.stringify(bootedVolumeSettings, null, '\t')}`);
         bootedVolumeSettings = data;
         console.log(`[INIT] volume settings: ${JSON.stringify(data, null, '\t')}`)
         const message = (JSON.stringify({ type: CustomEventTypes.SERVER_STATE, data: { bootedVolumeSettings } }));
@@ -89,8 +75,6 @@ function handleCustomEvent(event: keyof typeof CustomEventTypes, data: any) {
         const { audioKey, faderVolume } = data;
         updateVolume(bootedVolumeSettings, audioKey, faderVolume);
         console.log(`[UPDATED STATE] settings: bootedVolumeSettings`, bootedVolumeSettings);
-
-
         const message = (JSON.stringify({ type: CustomEventTypes.SERVER_STATE, data: { bootedVolumeSettings } }));
         broadcastMessage(message);
       } catch (error) {
@@ -119,7 +103,7 @@ function handleCustomEvent(event: keyof typeof CustomEventTypes, data: any) {
   }
 }
 
-function broadcastMessage(message: string) {
+export function broadcastMessage(message: string) {
   wsServer.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(message);
