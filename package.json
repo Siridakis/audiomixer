@@ -1,0 +1,19 @@
+{
+  "name": "audiomixer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "websocket",
+    "react"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace websocket\" \"npm run dev --workspace react\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
