@@ -1,0 +1,26 @@
+{
+  "name": "audiomixer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "websocket",
+    "react"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace websocket\" \"npm run dev --workspace react\"",
+    "build": "npm run build:websocket && npm run build:react",
+    "build:websocket": "npm run build --workspace websocket && cp -r websocket/dist/* bundle/websocket",
+    "build:react": "npm run build --workspace react && cp -r react/dist/* bundle/react/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.0.1",
+    "biome": "^0.3.3"
+  },
+  "dependencies": {
+    "serve": "^14.2.3"
+  }
+}
