@@ -17,10 +17,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^9.0.1",
-    "biome": "^0.3.3"
+    "biome": "^0.2.2",
+    "concurrently": "^9.0.1"
   },
   "dependencies": {
-    "serve": "^14.2.3"
+    "serve": "^6.5.8"
   }
 }

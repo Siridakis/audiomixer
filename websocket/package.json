@@ -1,14 +1,31 @@
 {
-  "name": "ws",
-  "version": "1.0.0",
+  "name": "audiomixer-websocket",
+  "version": "1.0.6",
   "description": "",
+  "git": "git@github.com:Siridakis/audiomixer.git",
   "main": "index.js",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/Util": {
+      "require": "./dist/Util.js",
+      "import": "./dist/Util.mjs",
+      "types": "./dist/Util.d.ts"
+    }
+  },
   "scripts": {
-    "dev": "nodemon ./main.ts",
-    "build": "tsc"
+    "dev": "nodemon ./src/main.ts",
+    "build": "tsup ./src"
   },
   "keywords": [],
-  "author": "",
+  "author": "Thiago",
   "license": "ISC",
   "dependencies": {
     "@types/express": "^4.17.21",
@@ -18,5 +35,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0"
   }
 }
