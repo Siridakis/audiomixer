@@ -1,10 +1,21 @@
 import { CustomEventTypes, type VolumeSetting } from './Types';
+import WebSocket from 'ws';
 
 export async function bootAudioMixerServer(
   getTracks: () => Array<VolumeSetting>,
   setTrackVolume: (volumeSetting: VolumeSetting) => void,
   volumeControl: (audioKey: string, faderVolume: number, fadeTime?: number, stopAfterComplete?: boolean) => void,
 ) {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+  let WebSocketClient: any;
+  if (typeof window === 'undefined') {
+    // Node.js environment, use 'ws' package
+    WebSocketClient = require('ws');
+  } else {
+    // Browser environment, use native WebSocket
+    WebSocketClient = window.WebSocket;
+  }
   console.log('$ WS audioServer boot');
   const socket = new WebSocket('ws://localhost:8080');
   try {
@@ -15,7 +26,7 @@ export async function bootAudioMixerServer(
     });
     // Event listener for when a message is received from the server
     socket.addEventListener('message', (event) => {
-      const parsedEvent = JSON.parse(event.data);
+      const parsedEvent = JSON.parse(event.data.toString());
       if (parsedEvent.type === CustomEventTypes.SERVER_STATE) {
         console.log('[UPDATE EVENT] Update volume settings received by the audio server', parsedEvent.data);
         // Call AudioHandler.volumeControl passing in the trackName and update volume. This will immediately change the volume of the track in the game
