@@ -2,6 +2,11 @@
   padding-inline: 2rem;
 }
 
+body {
+  max-width: 1000px;
+  margin: auto;
+}
+
 .mixerGrid {
   position: relative;
   display: grid;

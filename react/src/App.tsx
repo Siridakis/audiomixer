@@ -20,7 +20,7 @@ export default function App() {
     share: false,
     shouldReconnect: () => true,
   });
-  // on successful connection send a greeting mesage
+  // on successful connection send greeting message
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     console.log('Connection state changed');
