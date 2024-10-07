@@ -2,6 +2,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import SliderInput from './Components/SliderInput';
 import { useEffect, useState } from 'react';
 import classes from './App.module.css';
+import { Button, Flex } from '@mantine/core';
 
 type VolumeSettings = {
   bootedVolumeSettings: Array<VolumeSetting>;
@@ -80,9 +81,23 @@ export default function App() {
     });
   }
 
+  function handleExportConfig() {
+    const element = document.createElement('a');
+    const file = new Blob([JSON.stringify(volume, null, 2)], { type: 'application/json' });
+    element.href = URL.createObjectURL(file);
+    element.download = 'volume-settings.json';
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  }
+
   return (
     <div className={classes.appBody}>
-      <h1>Audio Mixer</h1>
+      <Flex justify={'space-between'} align={'center'}>
+        <h1>Audio Mixer</h1>
+        <Button color="green" onClick={() => handleExportConfig()}>
+          Export Config
+        </Button>
+      </Flex>
       <div className={classes.mixerGrid}>
         {volume.bootedVolumeSettings.length > 0 &&
           volume.bootedVolumeSettings.map((item: VolumeSetting) => (
