@@ -21,12 +21,14 @@ export default function App() {
     share: false,
     shouldReconnect: () => true,
   });
+  const [webSocketStatus, setWebSocketStatus] = useState('offline');
   // on successful connection send greeting message
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     console.log('Connection state changed');
     if (readyState === ReadyState.OPEN) {
       sendMessage('Hello from Client');
+      setWebSocketStatus('online');
     }
   }, [readyState]);
   // log the incoming message
@@ -98,6 +100,21 @@ export default function App() {
           Export Config
         </Button>
       </Flex>
+      <Flex direction={'column'} mb={'2rem'}>
+        <span>
+          Web Socket Status: <strong>{webSocketStatus}</strong>
+        </span>
+      </Flex>
+      {volume.bootedVolumeSettings.length === 0 && (
+        <>
+          <h3>Something went wrong...</h3>
+          <p>
+            If you are seeing this message, it means the web application was unable to connect to the web socket server.
+            Check the <a href="http://wiki.ino-games.com:8080/en/Development/audiomixer">AudioMixer docs </a> for more
+            information.
+          </p>
+        </>
+      )}
       <div className={classes.mixerGrid}>
         {volume.bootedVolumeSettings.length > 0 &&
           volume.bootedVolumeSettings.map((item: VolumeSetting) => (
